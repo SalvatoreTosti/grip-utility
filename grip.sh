@@ -36,19 +36,16 @@ function new() {
 }
 
 
-echo "Howdy, $1"
-
-
 case "$1" in
 	new)
 	new "$2"
-		
-		
 	;;
 	sync)
+	
 	echo "sync"
 	;;
 	save)
+	
 	echo "save"
 	;;
 	*)
