@@ -5,8 +5,6 @@
 #!!!NOTE: - indicates an idea or thought about program future development / execution.
 #!!!TODO: - indicates a piece of the program which should be revisited at a later date.
 
-
-#rsync --update --progress -r CS_Lab_Spring_14/CoralImageAnalysis/ CS\ Summer\ 14/CoralImageAnalysis/
 #git commit --message=
 
 #Just hashing out some thoughts here
@@ -25,17 +23,15 @@
 #grip startr (filename)	//makes a new file and starts a new git repository.
 #						//default will make a file called README and open in prefered text editor
 
-
-
 #grip startb name	
 
 #grip me		//show all information in grip_info file
 
 #grip purgeme	//delete all information in grip_info file
 
-#grip megn		//show git name (local git name) and ask if user wants to change
+#grip megn		//show git name (local git name) and ask if user wants to change it.
 
-#grip mehn		//who github name (github user account name) and ask if user wants to change		
+#grip mehn		//show github name (github user account name) and ask if user wants to change it.		
 
 #grip syncr name
 
