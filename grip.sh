@@ -5,36 +5,27 @@
 #!!!NOTE: - indicates an idea or thought about program future development / execution.
 #!!!TODO: - indicates a piece of the program which should be revisited at a later date.
 
-#git commit --message=
-
-#Just hashing out some thoughts here
 #grip update f1 f2 	//update one file relative to another using rsync
 #					//then commit changes via git
+#git commit --message=
+#grip syncr name
+#grip startb name
+#grip nameme
+#grip mailme
+#grip megn		//show git name (local git name) and ask if user wants to change it.
+#grip mehn		//show github name (github user account name) and ask if user wants to change it.		
 
 #grip save REPO_NAME //commits changes and then pushes changes to REPO_NAME
-
 #grip sync source dest 	//copies all files from source into dest (via rsync)
 #					   	//simultaneously adding all new files to git's watch via add
 #						//finally, it commits this change to the dest repo
-
 #grip new file.txt	//makes a new file called 'file.txt' in prefered editor
 #					//then git adds 'file.txt'
-
 #grip startr (filename)	//makes a new file and starts a new git repository.
 #						//default will make a file called README and open in prefered text editor
 
-#grip startb name	
-
 #grip me		//show all information in grip_info file
-
 #grip purgeme	//delete all information in grip_info file
-
-#grip megn		//show git name (local git name) and ask if user wants to change it.
-
-#grip mehn		//show github name (github user account name) and ask if user wants to change it.		
-
-#grip syncr name
-
 
 function help_func() { #named as such to prevent overlap with default 'help' in unix
 	#statements
@@ -64,6 +55,7 @@ function startrCloneHelper() {
 }
 
 function startrTellGithub() {
+	#!!!TODO: have the initializer start a repo and a new branch called 'development'
 	source $GRIPFILE
 	REPONAME=$1
 	token="$GITHUBAPITOKEN"	#get a token from Github and put inside the quotes, it's just that easy!
@@ -132,8 +124,38 @@ function jsonHelper() {
 	IFS=$oldIFS
 }
 
+function getNameHelper() {
+	echo "Please enter your name for git: "
+	read input_variable
+	echo "You entered: $input_variable"
+}
+
+function initGripFileHelper() {
+	 #GITNAME=$(git config user.name)
+	 #GITEMAIL=$(git config user.email)
+	 echo $GITNAME
+	 echo $GITEMAIL
+	 if [ -z "$GITNAME" ]; then
+	 	echo "Please enter your name for git: "
+	 	read input_variable
+	 	NEWNAME=$input_variable
+		git config user.name "$NEWNAME"
+		GITNAME=$NEWNAME
+	 fi
+	 if [ -z "$GITEMAIL" ]; then
+		 echo "Please enter your email for git: "
+		 read input_variable
+		 NEWEMAIL=$input_variable
+		 #echo "$NEWEMAIL"
+		 git config user.email "$NEWEMAIL"
+		 GITEMAIL=$NEWEMAIL
+	 fi
+}
+
 function initializeHelper() {
 	source $GRIPFILE
+	initGripFileHelper 
+	
 	USERNAME=$GITHUBUSERNAME
 	NOTE="grip API for "$GITNAME""
 	
@@ -182,7 +204,8 @@ function meHelper() {
 }
 
 function meGitNameHelper() {
-	echo "Git name helper "
+	#echo "Git name helper"
+	echo $(git config user.name)
 }
 
 function meGithubNameHelper() {
@@ -211,7 +234,7 @@ case "$1" in
 	meHelper
 	;;
 	test)
-	
+	initGripFileHelper
 	;;
 	*)
 	help_func
