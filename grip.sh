@@ -30,11 +30,20 @@
 
 function help_func() { 
 	#named as such to prevent overlap with default 'help' in unix statements
-	echo "grip is a script which extends and bundles some git functionalities."
+	echo ""
+	echo "* * * * * * * * * * * * * * * * * * * * * * * * * * * * "
+	echo "Grip is a script which extends and bundles some git functionalities."
+	echo ""
 	echo "new - creates a new file and commits it to the active git repository."
 	echo "Template: grip new <filename>"
+	echo ""
 	echo "init - initializes a new user"
-	echo "startr - "
+	echo "Template: grip init"
+	echo ""
+	echo "startr - initializes a new repository"
+	echo "Template: grip startr <reponame>"
+	echo ""
+	echo "* * * * * * * * * * * * * * * * * * * * * * * * * * * * "
 }
 
 function new() {
