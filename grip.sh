@@ -15,20 +15,21 @@
 #grip megn		//show git name (local git name) and ask if user wants to change it.
 #grip mehn		//show github name (github user account name) and ask if user wants to change it.		
 
-#grip save REPO_NAME //commits changes and then pushes changes to REPO_NAME
+#grip save <comment> 	//Commits changes in documents with message of <comment> 
+#					 	//prompts for comment if not supplied.
 #grip sync source dest 	//copies all files from source into dest (via rsync)
 #					   	//simultaneously adding all new files to git's watch via add
 #						//finally, it commits this change to the dest repo
-#grip new file.txt	//makes a new file called 'file.txt' in prefered editor
-#					//then git adds 'file.txt'
+#grip new file.txt		//makes a new file called 'file.txt' in prefered editor
+#						//then git adds 'file.txt'
 #grip startr (filename)	//makes a new file and starts a new git repository.
 #						//default will make a file called README and open in prefered text editor
 
 #grip me		//show all information in grip_info file
 #grip purgeme	//delete all information in grip_info file
 
-function help_func() { #named as such to prevent overlap with default 'help' in unix
-	#statements
+function help_func() { 
+	#named as such to prevent overlap with default 'help' in unix statements
 	echo "grip is a script which extends and bundles some git functionalities."
 	echo "new - creates a new file and commits it to the active git repository."
 	echo "Template: grip new <filename>"
@@ -41,17 +42,23 @@ function new() {
 	if [ -f $FILE ]; then
 		echo "File '$FILE' already exists."
 	else
-		touch $FILE
-		open -t $FILE
-		git add $FILE	
+		touch "$FILE"
+		git add "$FILE"
+		open -t "$FILE"
 	fi
 }
 
 function startrCloneHelper() {
 	GITHUBUSERNAME=$1
 	REPONAME=$2
-	echo git://github.come/$GITHUBUSERNAME/$REPONAME
+	echo git://github.com/$GITHUBUSERNAME/$REPONAME
 	git clone git://github.com/$GITHUBUSERNAME/$REPONAME
+	sleep 1 	#On occasion repo would be created, but not copied to local machine.
+				#I think this may have been an issue with communication time between requests,
+				#so I added a one second sleep here.
+	#cd $REPONAME
+	#git remote set-url origin https://github.com/$GITHUBUSERNAME/$REPONAME.git
+	git remote set-url origin git@github.com:$GITHUBUSERNAME/$REPONAME.git
 }
 
 function startrTellGithub() {
@@ -85,6 +92,7 @@ function startrTellGithub() {
 	if [ $returnCode -eq "201" ]; then
 		echo "New repository $REPONAME was created!"
 		startrCloneHelper $GITHUBUSERNAME $REPONAME
+		
 	elif [ $returnCode -eq "422" ]; then
 		echo "Repository $REPONAME already exists for this user." 
 	elif [ $returnCode -eq "401" ]; then
@@ -92,8 +100,6 @@ function startrTellGithub() {
 	else 
 		echo "An error occoured, HTTP: $returnCode"
 	fi
-	
-	#curl -i -H 'Authorization: token d30e3e152ab490f38d96aa4b08eff9f4581329cf' -d '{ "name": "test", "auto_init": true, 	"private": false }' https://api.github.com/user/repos
 }
 
 function startr() {
@@ -131,8 +137,8 @@ function getNameHelper() {
 }
 
 function initGripFileHelper() {
-	 #GITNAME=$(git config user.name)
-	 #GITEMAIL=$(git config user.email)
+	 GITNAME=$(git config user.name)
+	 GITEMAIL=$(git config user.email)
 	 echo $GITNAME
 	 echo $GITEMAIL
 	 if [ -z "$GITNAME" ]; then
@@ -158,8 +164,8 @@ function initializeHelper() {
 	
 	USERNAME=$GITHUBUSERNAME
 	NOTE="grip API for "$GITNAME""
-	
 	if [ -z "$GITHUBAPITOKEN" ]; then
+		echo "No API code has been associated with "$GITNAME" yet."
 		resp=$(curl -silent -i -u $USERNAME -d '{"scopes": ["repo","public_repo"], "note": '"\"$NOTE\""'}' https://api.github.com/authorizations)
 		
 		httpLine=$(jsonHelper "$resp" 1) 
@@ -179,7 +185,7 @@ function initializeHelper() {
 		token=$(echo "${token%?}")	#remove trailing quote
 		token=$(echo "${token%?}")	#remove trailing comma
 		tokenString="GITHUBAPITOKEN=$token"
-		echo $tokenString >> grip_info.txt
+		echo $tokenString >> $GRIPFILE #was grip_info.txt, changed to reflect grip_info's new location in $HOME
 	else
 		echo "API key has already been initialized."
 	fi
@@ -212,7 +218,23 @@ function meGithubNameHelper() {
 	echo "Github name helper"
 }
 
-GRIPFILE="./grip_info.txt"
+function saveHelper {
+	COMMENT="$1"
+	git add -u .  #Adds all updates since last commit to current commit
+	#grip save COMMENT //commits changes with COMMENT, if supplied, then pushes to repository
+	if [ -z "$COMMENT" ]; then
+		git commit
+		#git commit -m "$COMMENT"
+	else
+		git commit -m "$COMMENT"
+		#echo "Please input a commit message: "
+		#read input_variable
+		#git commit -m "$input_variable"
+	fi
+	git push
+}
+
+GRIPFILE="$HOME/grip_info.txt"
 
 case "$1" in
 	new)
@@ -222,7 +244,7 @@ case "$1" in
 	echo "sync"
 	;;
 	save)
-	echo "save"
+	saveHelper "$2"
 	;;
 	startr)
 	startr "$2"
