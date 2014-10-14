@@ -7,7 +7,6 @@ GRIPFILE=""$HOME/grip""
 function main(){
 	if [ ! -d "$GRIPFILE" ]; then
 		mkdir "$GRIPFILE"
-		echo "does not exist"
 	fi
 	
 	if [ ! -f "$GRIPFILE/grip_info.txt" ]; then
