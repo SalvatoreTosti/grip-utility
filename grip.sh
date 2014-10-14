@@ -2,12 +2,12 @@
 #grip.sh
 
 #Key for reading comments
-#!!!NOTE: - indicates an idea or thought about program future development / execution.
-#!!!TODO: - indicates a piece of the program which should be revisited at a later date.
+#NOTE: - indicates an idea or thought about program future development / execution.
+#TODO: - indicates a piece of the program which should be revisited at a later date.
 
 #grip update f1 f2 	//update one file relative to another using rsync
 #					//then commit changes via git
-#git commit --message=
+#git commit --message= test
 #grip syncr name
 #grip startb name
 #grip nameme
@@ -71,8 +71,8 @@ function startrCloneHelper() {
 }
 
 function startrTellGithub() {
-	#!!!TODO: have the initializer start a repo and a new branch called 'development'
-	source $GRIPFILE
+	#TODO: have the initializer start a repo and a new branch called 'development'
+	source $GRIPINFO
 	REPONAME=$1
 	token="$GITHUBAPITOKEN"	#get a token from Github and put inside the quotes, it's just that easy!
 	url="https://api.github.com/user/repos"
@@ -121,7 +121,7 @@ function startr() {
 
 function jsonHelper() {
 	#Template:  jsonHelper <JSON_to_be_parsed> <line_number_to_return>
-	#!!!NOTE: returns "" if line number is out of range
+	#NOTE: returns "" if line number is out of range
 	local JSON=$1
 	local LINENUM=$2
 	local cntr=1
@@ -168,7 +168,7 @@ function initGripFileHelper() {
 }
 
 function initializeHelper() {
-	source $GRIPFILE
+	source $GRIPINFO
 	initGripFileHelper 
 	
 	USERNAME=$GITHUBUSERNAME
@@ -194,7 +194,7 @@ function initializeHelper() {
 		token=$(echo "${token%?}")	#remove trailing quote
 		token=$(echo "${token%?}")	#remove trailing comma
 		tokenString="GITHUBAPITOKEN=$token"
-		echo $tokenString >> $GRIPFILE #was grip_info.txt, changed to reflect grip_info's new location in $HOME
+		echo $tokenString >> $GRIPINFO #was grip_info.txt, changed to reflect grip_info's new location in $HOME
 	else
 		echo "API key has already been initialized."
 	fi
@@ -211,8 +211,8 @@ function replaceHelper() {
 }
 
 function meHelper() {
-	#!!!TODO: I should make this output prettier with some nice text replacement
-	FILE=$GRIPFILE
+	#TODO: I should make this output prettier with some nice text replacement
+	FILE=$GRIPINFO
 	for line in `cat $FILE`; do
 		echo "$line"
 	done < "$FILE"
@@ -243,7 +243,65 @@ function saveHelper {
 	git push
 }
 
-GRIPFILE="$HOME/grip_info.txt"
+function licenseInsertHelper(){
+	f="LICENSE"
+	name="$1"
+	echo "$name"
+	year="$2"
+	cat "$GRIPFILE/Art_Template.txt" > "$f"
+	sed -i "" "s/fullname/$name/" $f
+	sed -i "" "s/year/$year/" $f
+}
+
+function artisticCopyrightHelper(){
+	echo "Please enter a name for the copyright information: "
+	read input
+	cwname="$input"
+	echo "Please enter a year for the copyright information: "
+	read year_input
+	cwyear="$year_input"
+	#echo $cwname $cwyear
+	touch "LICENSE"
+	git add "LICENSE"
+	licenseInsertHelper "$cwname" "$cwyear"
+	
+}
+
+function liscenseRemoveHelper(){
+	if [ -f "LICENSE" ]; then
+		rm LICENSE
+	fi
+}
+
+function artisticYesNoHelper(){
+	while true; do
+		read input
+		if [ $input == yes ] || [ $input == y ]; then
+			liscenseRemoveHelper
+			artisticCopyrightHelper
+			exit
+		elif [ $input == no ] || [ $input == n ]; then
+			exit
+		else
+			echo "Enter 'yes' or 'no'."
+		fi
+	done
+}
+
+
+function artisticLiscenceHelper(){
+	if [ -f "LICENSE" ]; then
+		echo "A License already exists for this directory."	
+		echo "Would you like to replace it with an Artistic License 2.0?"
+	else
+		echo "No License in this directory."
+		echo "Would you like to add an Artistic License 2.0 to your project?"
+	fi
+	artisticYesNoHelper
+}
+
+GRIPFILE="$HOME/grip_files"
+GRIPINFO="$GRIPFILE/grip_info.txt"
 
 case "$1" in
 	new)
@@ -263,6 +321,9 @@ case "$1" in
 	;;
 	me)
 	meHelper
+	;;
+	artistic)
+	artisticLiscenceHelper
 	;;
 	test)
 	initGripFileHelper
