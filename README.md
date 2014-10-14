@@ -10,6 +10,7 @@ you can still use git without having to worry about compatability issues.
 **Working commands:**
 - grip new
 - grip startr
+- grip artistic
 
 **Commands in development:**
 - grip me

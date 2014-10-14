@@ -145,26 +145,43 @@ function getNameHelper() {
 	echo "You entered: $input_variable"
 }
 
+function replaceHelper() {
+	Key="$1"
+	New="$2"
+	File="$3"
+	#Template:  replaceHelper $Key $New $File
+	#this should be used to replace any line containing $Key 
+	#with $New in document $File
+	sed -i "" 's/^'"$Key"'.*/'"$New"'/' $File
+}
+
 function initGripFileHelper() {
-	 GITNAME=$(git config user.name)
-	 GITEMAIL=$(git config user.email)
-	 echo $GITNAME
-	 echo $GITEMAIL
+	source $GRIPINFO
 	 if [ -z "$GITNAME" ]; then
 	 	echo "Please enter your name for git: "
 	 	read input_variable
-	 	NEWNAME=$input_variable
+	 	NEWNAME="$input_variable"
 		git config user.name "$NEWNAME"
-		GITNAME=$NEWNAME
+		GITNAME="$NEWNAME"
+		echo  "GITNAME="\""$GITNAME"\" >> "$GRIPINFO"	#write to grip information file in a format shell readable.
 	 fi
+	 
 	 if [ -z "$GITEMAIL" ]; then
 		 echo "Please enter your email for git: "
 		 read input_variable
-		 NEWEMAIL=$input_variable
-		 #echo "$NEWEMAIL"
+		 NEWEMAIL="$input_variable"
 		 git config user.email "$NEWEMAIL"
-		 GITEMAIL=$NEWEMAIL
+		 GITEMAIL="$NEWEMAIL"
+		 echo  "GITEMAIL="\""$GITEMAIL"\" >> "$GRIPINFO"
 	 fi
+	 
+	 if [ -z "$GITHUBUSERNAME" ]; then
+		 echo "Please enter your username for git: "
+		 read input_variable
+		 GITHUBUSERNAME="$input_variable"
+		 echo  "GITHUBUSERNAME="\""$GITHUBUSERNAME"\" >> "$GRIPINFO"
+	 fi
+	 
 }
 
 function initializeHelper() {
@@ -193,22 +210,15 @@ function initializeHelper() {
 		token=$(echo $tokenLine | cut -c11-)	#remove leading token junk
 		token=$(echo "${token%?}")	#remove trailing quote
 		token=$(echo "${token%?}")	#remove trailing comma
-		tokenString="GITHUBAPITOKEN=$token"
-		echo $tokenString >> $GRIPINFO #was grip_info.txt, changed to reflect grip_info's new location in $HOME
+		#tokenString="GITHUBAPITOKEN=$token"
+		#echo $tokenString >> $GRIPINFO 
+		echo  "GITHUBAPITOKEN="\""$token"\" >> "$GRIPINFO"
 	else
 		echo "API key has already been initialized."
 	fi
 }
 
-function replaceHelper() {
-	Key=$1
-	New=$2
-	File=$3
-	#Template:  replaceHelper $Key $New $File
-	#this should be used to replace any line containing $Key 
-	#with $New in document $File
-	sed -i "" 's/^'"$Key"'.*/'"$New"'/' $File
-}
+
 
 function meHelper() {
 	#TODO: I should make this output prettier with some nice text replacement
@@ -249,11 +259,12 @@ function licenseInsertHelper(){
 	echo "$name"
 	year="$2"
 	cat "$GRIPFILE/Art_Template.txt" > "$f"
-	sed -i "" "s/fullname/$name/" $f
-	sed -i "" "s/year/$year/" $f
+	sed -i "" "s/\[fullname\]/$name/" $f
+	sed -i "" "s/\[year\]/$year/" $f
 }
 
 function artisticCopyrightHelper(){
+	#TODO: update year generation so it's automatic with current year.
 	echo "Please enter a name for the copyright information: "
 	read input
 	cwname="$input"
@@ -300,7 +311,7 @@ function artisticLiscenceHelper(){
 	artisticYesNoHelper
 }
 
-GRIPFILE="$HOME/grip_files"
+GRIPFILE="$HOME/grip"
 GRIPINFO="$GRIPFILE/grip_info.txt"
 
 case "$1" in
@@ -317,7 +328,8 @@ case "$1" in
 	startr "$2"
 	;;
 	init)
-	initializeHelper "$2"
+	#initializeHelper "$2"
+	initializeHelper
 	;;
 	me)
 	meHelper
