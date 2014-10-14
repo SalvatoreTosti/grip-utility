@@ -17,7 +17,8 @@ function main(){
 	if [ ! -f "$GRIPFILE/grip.sh" ]; then
 		cp grip.sh "$GRIPFILE/grip.sh"
 	fi
-	#sh "$GRIPFILE/grip.sh" init
+	sh "$GRIPFILE/grip.sh" init
+	echo "alias grip='sh "$HOME"/grip/grip.sh'" >> "$HOME/.bash_profile" 
 }	
 
 main
