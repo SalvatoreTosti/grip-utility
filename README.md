@@ -3,7 +3,7 @@ Grip
 
 A shell based expansion of git's capabilities
 --------------
-Grip is a series of commands which combine and enhance the capabilities of git.
+Grip is a series of commands which combine and enhance the capabilities of git.  
 Since git commands are at the core of Grip, 
 you can still use git without having to worry about compatability issues.
 
@@ -12,9 +12,11 @@ you can still use git without having to worry about compatability issues.
 - grip startr
 - grip artistic
 - grip init
+- grip save
 
 **Commands in development:**
 - grip me
+
  
 **How to install and use Grip**
 --------------
