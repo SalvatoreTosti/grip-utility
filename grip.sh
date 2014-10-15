@@ -338,7 +338,7 @@ case "$1" in
 	artisticLiscenceHelper
 	;;
 	test)
-	initGripFileHelper
+	echo "test"
 	;;
 	*)
 	help_func
