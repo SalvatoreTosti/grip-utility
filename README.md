@@ -25,6 +25,6 @@ This should create a new folder in your $HOME directory called grip.
 The 'grip' folder houses the actual grip script as well as accompanying information grip requires.  
 The 'install.sh' also adds an alias to your .bash_profile for the word 'grip'.  
 The alias connects to the script in the '$HOME/grip' folder.  
-You can now simply type 'grip <grip command>' and let the magic happen!  
+You can now simply type 'grip [grip command]' and let the magic happen!  
 
 
