@@ -20,7 +20,7 @@ you can still use git without having to worry about compatability issues.
  
 **How to install and use Grip**
 --------------
-Installing grip is a cinch.
+Installing grip is a cinch.  
 Download the files files from this repository and navigate to the folder.  
 Once inside the folder run the command 'sh install.sh'.  
 This should create a new folder in your $HOME directory called grip.  

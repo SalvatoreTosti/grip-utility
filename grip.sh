@@ -66,8 +66,8 @@ function startrCloneHelper() {
 				#I think this may have been an issue with communication time between requests,
 				#so I added a one second sleep here.
 	#cd $REPONAME
-	#git remote set-url origin https://github.com/$GITHUBUSERNAME/$REPONAME.git
-	git remote set-url origin git@github.com:$GITHUBUSERNAME/$REPONAME.git
+	git remote set-url origin https://github.com/$GITHUBUSERNAME/$REPONAME.git
+	#git remote set-url origin git@github.com:$GITHUBUSERNAME/$REPONAME.git
 }
 
 function startrTellGithub() {
@@ -157,6 +157,7 @@ function replaceHelper() {
 
 function initGripFileHelper() {
 	source $GRIPINFO
+	
 	 if [ -z "$GITNAME" ]; then
 	 	echo "Please enter your name for git: "
 	 	read input_variable
